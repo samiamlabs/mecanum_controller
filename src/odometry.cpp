@@ -79,7 +79,7 @@ bool Odometry::update(const double &front_left_vel, const double &front_right_ve
   linear_x_ = (front_left_vel + front_right_vel + rear_left_vel + rear_right_vel)*(wheel_radius_/4);
   linear_y_ = (-front_left_vel + front_right_vel + rear_left_vel - rear_right_vel)*(wheel_radius_/4);
 
-  angular_ = (-front_left_vel + front_right_vel - rear_left_vel + rear_right_vel)*(wheel_radius_/(4*(wheel_base_ + track_)));
+  angular_ = (-front_left_vel + front_right_vel - rear_left_vel + rear_right_vel)*(wheel_radius_/(2*(wheel_base_ + track_)));
 
   const double dt = (time - last_update_timestamp_).toSec();
   if (dt < 0.0001)

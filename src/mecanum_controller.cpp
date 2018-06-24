@@ -20,7 +20,7 @@ namespace mecanum_controller{
     cmd_vel_timeout_(0.5),
     allow_multiple_cmd_vel_publishers_(true),
     publish_cmd_(true),
-    open_loop_(false),
+    open_loop_(true),
     enable_odom_tf_(true)
   {
   }
@@ -105,7 +105,7 @@ namespace mecanum_controller{
     publish_period_ = ros::Duration(1.0 / publish_rate);
 
     controller_nh.param("open_loop", open_loop_, open_loop_);
-    
+
     int velocity_rolling_window_size = 10;
     odometry_.setVelocityRollingWindowSize(velocity_rolling_window_size);
     odometry_.setWheelParams(track_, wheel_base_, wheel_radius_);
