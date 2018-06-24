@@ -39,7 +39,7 @@
 #ifndef SPEED_LIMITER_H
 #define SPEED_LIMITER_H
 
-namespace diff_drive_controller
+namespace mecanum_controller
 {
 
   class SpeedLimiter
@@ -126,6 +126,6 @@ namespace diff_drive_controller
     double max_jerk;
   };
 
-} // namespace diff_drive_controller
+} // namespace mecanum_controller
 
 #endif // SPEED_LIMITER_H

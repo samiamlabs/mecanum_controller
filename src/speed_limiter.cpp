@@ -38,7 +38,7 @@
 
 #include <algorithm>
 
-#include <diff_drive_controller/speed_limiter.h>
+#include <mecanum_controller/speed_limiter.h>
 
 template<typename T>
 T clamp(T x, T min, T max)
@@ -46,7 +46,7 @@ T clamp(T x, T min, T max)
   return std::min(std::max(min, x), max);
 }
 
-namespace diff_drive_controller
+namespace mecanum_controller
 {
 
   SpeedLimiter::SpeedLimiter(

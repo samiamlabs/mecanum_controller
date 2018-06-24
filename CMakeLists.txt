@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
     realtime_tools
     tf
     urdf
+    urdf_geometry_parser
 )
 
 find_package(catkin REQUIRED COMPONENTS ${${PROJECT_NAME}_CATKIN_DEPS})
@@ -34,9 +35,10 @@ include_directories(SYSTEM
   ${catkin_INCLUDE_DIRS}
 )
 
-add_library(${PROJECT_NAME} src/mecanum_controller.cpp )
+add_library(${PROJECT_NAME} src/mecanum_controller.cpp src/speed_limiter.cpp src/odometry.cpp)
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
-add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_generate_messages_cpp ${PROJECT_NAME}_gencfg)
+add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${PROJECT_NAME}_gencfg)
+# add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_generate_messages_cpp ${PROJECT_NAME}_gencfg)
 
 install(TARGETS ${PROJECT_NAME}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}

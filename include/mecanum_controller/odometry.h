@@ -48,7 +48,7 @@
 #include <boost/accumulators/statistics/rolling_mean.hpp>
 #include <boost/function.hpp>
 
-namespace diff_drive_controller
+namespace mecanum_controller
 {
   namespace bacc = boost::accumulators;
 
@@ -79,20 +79,16 @@ namespace diff_drive_controller
 
     /**
      * \brief Updates the odometry class with latest wheels position
-     * \param left_pos  Left  wheel position [rad]
-     * \param right_pos Right wheel position [rad]
-     * \param time      Current time
      * \return true if the odometry is actually updated
      */
-    bool update(double left_pos, double right_pos, const ros::Time &time);
+    bool update(const double &front_left_vel, const double &front_right_vel,
+                          const double &rear_left_vel, const double &rear_right_vel,
+                          const ros::Time &time);
 
     /**
      * \brief Updates the odometry class with latest velocity command
-     * \param linear  Linear velocity [m/s]
-     * \param angular Angular velocity [rad/s]
-     * \param time    Current time
      */
-    void updateOpenLoop(double linear, double angular, const ros::Time &time);
+    void updateOpenLoop(double linear_x, double linear_y, double angular, const ros::Time &time);
 
     /**
      * \brief heading getter
@@ -125,9 +121,18 @@ namespace diff_drive_controller
      * \brief linear velocity getter
      * \return linear velocity [m/s]
      */
-    double getLinear() const
+    double getLinearX() const
     {
-      return linear_;
+      return linear_x_;
+    }
+
+    /**
+     * \brief linear velocity getter
+     * \return linear velocity [m/s]
+     */
+    double getLinearY() const
+    {
+      return linear_y_;
     }
 
     /**
@@ -141,11 +146,8 @@ namespace diff_drive_controller
 
     /**
      * \brief Sets the wheel parameters: radius and separation
-     * \param wheel_separation   Separation between left and right wheels [m]
-     * \param left_wheel_radius  Left wheel radius [m]
-     * \param right_wheel_radius Right wheel radius [m]
      */
-    void setWheelParams(double wheel_separation, double left_wheel_radius, double right_wheel_radius);
+    void setWheelParams(double track, double wheel_base, double wheel_radius);
 
     /**
      * \brief Velocity rolling window size setter
@@ -158,6 +160,8 @@ namespace diff_drive_controller
     /// Rolling mean accumulator and window:
     typedef bacc::accumulator_set<double, bacc::stats<bacc::tag::rolling_mean> > RollingMeanAcc;
     typedef bacc::tag::rolling_window RollingWindow;
+
+    void integrateXY(double linear_x, double linear_y, double angular);
 
     /**
      * \brief Integrates the velocities (linear and angular) using 2nd order Runge-Kutta
@@ -179,7 +183,7 @@ namespace diff_drive_controller
     void resetAccumulators();
 
     /// Current timestamp:
-    ros::Time timestamp_;
+    ros::Time last_update_timestamp_;
 
     /// Current pose:
     double x_;        //   [m]
@@ -188,20 +192,17 @@ namespace diff_drive_controller
 
     /// Current velocity:
     double linear_;  //   [m/s]
+    double linear_x_, linear_y_;  //   [m/s]
     double angular_; // [rad/s]
 
     /// Wheel kinematic parameters [m]:
-    double wheel_separation_;
-    double left_wheel_radius_;
-    double right_wheel_radius_;
-
-    /// Previou wheel position/state [rad]:
-    double left_wheel_old_pos_;
-    double right_wheel_old_pos_;
+    double track_;
+    double wheel_base_;
+    double wheel_radius_;
 
     /// Rolling mean accumulators for the linar and angular velocities:
     size_t velocity_rolling_window_size_;
-    RollingMeanAcc linear_acc_;
+    RollingMeanAcc linear_accel_acc_, linear_jerk_acc_;
     RollingMeanAcc angular_acc_;
 
     /// Integration funcion, used to integrate the odometry:
